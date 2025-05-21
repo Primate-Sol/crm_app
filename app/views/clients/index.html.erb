@@ -1,0 +1,15 @@
+<h1>All Clients</h1>
+
+<%= link_to "Add New Client", new_client_path %>
+
+<ul>
+  <% @clients.each do |client| %>
+    <li>
+      <%= client["name"] %> |
+      <%= client["email"] %> |
+      <%= link_to "Show", client_path(client["id"]) %> |
+      <%= link_to "Edit", edit_client_path(client["id"]) %> |
+      <%= link_to "Delete", client_path(client["id"]), method: :delete, data: { confirm: "Are you sure?" } %>
+    </li>
+  <% end %>
+</ul>

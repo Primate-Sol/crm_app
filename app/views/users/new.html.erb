@@ -1,0 +1,26 @@
+<h1>Register</h1>
+
+<%= form_with url: register_path, method: :post do |f| %>
+  <div>
+    <%= label_tag :name %><br>
+    <%= text_field_tag :name, params[:name], required: true %>
+  </div>
+
+  <div>
+    <%= label_tag :email %><br>
+    <%= email_field_tag :email, params[:email], required: true %>
+  </div>
+
+  <div>
+    <%= label_tag :password %><br>
+    <%= password_field_tag :password, nil, required: true %>
+  </div>
+
+  <div>
+    <%= submit_tag "Register" %>
+  </div>
+<% end %>
+
+<p>
+  Already have an account? <%= link_to "Login", login_path %>
+</p>

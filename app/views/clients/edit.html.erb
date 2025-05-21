@@ -1,0 +1,8 @@
+<h1>Edit Client</h1>
+
+<%= form_with url: client_path(@client["id"]), method: :patch do %>
+  <p>Name: <%= text_field_tag :name, @client["name"] %></p>
+  <p>Email: <%= email_field_tag :email, @client["email"] %></p>
+  <p>Phone: <%= text_field_tag :phone, @client["phone"] %></p>
+  <%= submit_tag "Update Client" %>
+<% end %>

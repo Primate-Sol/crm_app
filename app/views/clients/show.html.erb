@@ -1,0 +1,9 @@
+<h1><%= @client["name"] %></h1>
+
+<p>Email: <%= @client["email"] %></p>
+<p>Phone: <%= @client["phone"] %></p>
+
+<%= link_to "Edit", edit_client_path(@client["id"]) %> |
+<%= link_to "Back", clients_path %> |
+<%= button_to "Delete", client_path(@client["id"]), method: :delete, data: { confirm: "Are you sure?" } %>
+
