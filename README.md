@@ -1,24 +1,45 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# CRM App
 
-Things you may want to cover:
+A Ruby-based web CRM application using Ruby on Rails with file-based JSON storage, hosted on DigitalOcean.
 
-* Ruby version
+# Completed Features
 
-* System dependencies
+- User registration and authentication
+- Login and logout functionality
+- Add, view, and delete clients
+- Session management with secure password hashing (bcrypt)
+- Data persistence using JSON files instead of a database
+- Basic user interface using ERB templates
 
-* Configuration
+# Future Features
 
-* Database creation
+- Centralized data management across all CRM components
+- Client profile management with detailed records
+- Invoicing and billing system
+- Ticketing and customer support module
+- Workflow automation and triggers
+- Task and project management tools
+- Document management and storage
+- Calendar integration and scheduling
+- Email integration for communication
+- Proposal and contract creation and management
 
-* Database initialization
 
-* How to run the test suite
+## Tech Stack
 
-* Services (job queues, cache servers, search engines, etc.)
+- Ruby on Rails (ERB frontend)
+- JSON files for data persistence (no database)
+- Hosted on DigitalOcean Droplet
 
-* Deployment instructions
+## Setup
 
-* ...
+1. Clone the repository.
+2. Run `bundle install`.
+3. Start the Rails server (`rails server`).
+4. Access the app via your browser.
+
+---
+
+This README will be updated as more features are developed.
