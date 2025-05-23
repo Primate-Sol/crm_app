@@ -1,41 +1,8 @@
 [
   {
-    "name": "LaWaylon",
-    "email": "lotzbattles@gmail.com",
-    "phone": "4097793958",
+    "name": "Admin",
+    "email": "admin@example.com",
+    "phone": "1234567890",
     "id": 1
-  },
-  {
-    "name": "MyKala Battles",
-    "email": "Touchedbytoler@icloud.com",
-    "phone": "4093137824",
-    "id": 2
-  },
-  {
-    "name": "Primate",
-    "email": "primatesolutions2022@gmail.com",
-    "phone": "99999999999",
-    "id": 3
-  },
-  {
-    "name": "LaWaylon Battles",
-    "email": "lotzbattles@gmail.com",
-    "phone": "4095533516",
-    "user_id": "03e8de34-4073-4f36-8c95-8d5ef186d85a",
-    "id": 5
-  },
-  {
-    "user_id": "8694df12-d585-4fd0-b150-f4c310113600",
-    "name": "Mod Pizza",
-    "email": "waylon.battles@modpizza.com",
-    "phone": "8888888888",
-    "id": 7
-  },
-  {
-    "user_id": "7782e064-326e-4f72-89cf-acc75e4b5f84",
-    "name": "Dashlynn Wright",
-    "email": "Dashlynnwright26@yahoo.com",
-    "phone": "4545454w",
-    "id": 8
   }
 ]
