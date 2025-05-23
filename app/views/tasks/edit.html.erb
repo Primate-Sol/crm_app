@@ -1,0 +1,8 @@
+<h1>Edit Task</h1>
+<%= form_with url: task_path(@task["id"]), method: :patch do %>
+  <p>Title: <%= text_field_tag :title, @task["title"] %></p>
+  <p>Description: <%= text_area_tag :description, @task["description"] %></p>
+  <p>Status: <%= select_tag :status, options_for_select(["pending", "in progress", "completed"], @task["status"]) %></p>
+  <p>Due Date: <%= date_field_tag :due_date, @task["due_date"] %></p>
+  <%= submit_tag "Update Task" %>
+<% end %>
