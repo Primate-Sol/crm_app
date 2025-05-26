@@ -1,46 +1,26 @@
 # README
 
 # CRM App
-
 A Ruby-based web CRM application using Ruby on Rails with file-based JSON storage, hosted on DigitalOcean.
 
 # Completed Features
+- User Registration & Authentication
+Users can register accounts and securely log in with password hashing via bcrypt.
 
-- User registration and authentication
-- Login and logout functionality
-- Add, view, and delete clients
-- Session management with secure password hashing (bcrypt)
-- Data persistence using JSON files instead of a database
-- Basic user interface using ERB templates
-- Basic dashboard
-  
-# Future Features
+- Session Management
+Secure session-based login with user-specific access.
 
-- Centralized data management across all CRM components
-- Client profile management with detailed records
-- Invoicing and billing system
-- Ticketing and customer support module
-- Workflow automation and triggers
-- Task and project management tools
-- Document management and storage
-- Calendar integration and scheduling
-- Email integration for communication
-- Proposal and contract creation and management
+- Client Management
+Add, view, and delete clients. Each client record is tied to the logged-in user.
 
+- Task Management
+Users can create, edit, and manage tasks associated with their account.
 
-## Tech Stack
+- Basic Dashboard
+After login, users are greeted with a dashboard showing counts of clients and tasks.
 
-- Ruby on Rails (ERB frontend)
-- JSON files for data persistence (no database)
-- Hosted on DigitalOcean Droplet
+- Data Persistence via JSON Files
+All app data (users, clients, tasks) is stored in JSON files using a JsonFileStore helper with file locking.
 
-## Setup
-
-1. Clone the repository.
-2. Run `bundle install`.
-3. Start the Rails server (`rails server`).
-4. Access the app via your browser.
-
----
-
-This README will be updated as more features are developed.
+- ERB-based UI
+Clean and minimal interface using Rails’ embedded Ruby templates.
