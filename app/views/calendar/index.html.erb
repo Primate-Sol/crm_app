@@ -1,2 +1,25 @@
 <h1>Calendar</h1>
-<div id="calendar" style="max-width: 900px; margin: 40px auto;"></div>
+<div id="calendar"></div>
+
+<script type="module">
+  import { Calendar } from "https://cdn.skypack.dev/@fullcalendar/core";
+  import dayGridPlugin from "https://cdn.skypack.dev/@fullcalendar/daygrid";
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const calendarEl = document.getElementById("calendar");
+
+    const calendar = new Calendar(calendarEl, {
+      plugins: [dayGridPlugin],
+      initialView: "dayGridMonth",
+    });
+
+    calendar.render();
+  });
+</script>
+
+<style>
+  #calendar {
+    max-width: 900px;
+    margin: 40px auto;
+  }
+</style>
