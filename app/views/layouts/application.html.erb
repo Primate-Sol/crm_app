@@ -7,6 +7,9 @@
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <!-- FullCalendar CSS (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
   </head>
   <body>
     <% if current_user %>
@@ -18,5 +21,20 @@
     <% end %>
 
     <%= yield %>
+
+    <!-- FullCalendar JS (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const calendarEl = document.getElementById("calendar");
+        if (calendarEl) {
+          const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: [] // Optional: Replace with actual data later
+          });
+          calendar.render();
+        }
+      });
+    </script>
   </body>
 </html>

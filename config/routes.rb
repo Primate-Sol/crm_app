@@ -4,6 +4,9 @@ Rails.application.routes.draw do
   root "dashboard#index"
   get "/dashboard", to: "dashboard#index", as: :dashboard
 
+  # calendar
+  get '/calendar', to: 'calendar#index'
+  
   resources :clients
   resources :tasks
   resources :projects
