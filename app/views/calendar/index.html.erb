@@ -8,13 +8,13 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("turbo:load", function () {
     const calendarEl = document.getElementById("calendar");
 
     if (calendarEl) {
       const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: "dayGridMonth" // ← this line was missing a comma
-        // Add options like events: [...] here later
+        initialView: "dayGridMonth"
+        // You can add options like `events: [...]` here
       });
 
       calendar.render();
