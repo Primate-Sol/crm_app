@@ -4,11 +4,5 @@
     "name": "Ruby",
     "email": "ruby@example.com",
     "password_digest": "$2a$12$oCTQw73mCZXiunPoyvqiaO4lXUwGpih3gQYhmMUZQZ8ZaPNJ0IsdS"
-  },
-  {
-    "id": "c069aa78-a771-4da5-8675-5ccc22a3b501",
-    "name": "Lotz",
-    "email": "lotzbattles@gmail.com",
-    "password_digest": "$2a$12$tcc5uLTLlbDPF7qfkiOCdewiwm8ASdEv3YHN8aEPIZQURivr44NaC"
   }
 ]
