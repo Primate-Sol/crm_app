@@ -12,7 +12,8 @@ A Ruby-based web CRM application using Ruby on Rails with file-based JSON storag
 - Session management with secure password hashing (bcrypt)
 - Data persistence using JSON files instead of a database
 - Basic user interface using ERB templates
-
+- Basic dashboard
+  
 # Future Features
 
 - Centralized data management across all CRM components
