@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "user_id": "19773dd1-6604-4476-a681-40aff4bc00ff",
+    "title": "Ruby Task",
+    "description": "Ruby on Rails Task",
+    "status": "in progress",
+    "due_date": "2025-06-05",
+    "id": 1
+  },
+  {
+    "user_id": "19773dd1-6604-4476-a681-40aff4bc00ff",
+    "title": "",
+    "description": "",
+    "status": "pending",
+    "due_date": "",
+    "id": 2
+  }
+]

@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
-  root "clients#index"
+  # get 'dashboard/index'
+  # root "clients#index"
+  root "dashboard#index"
+  get "/dashboard", to: "dashboard#index", as: :dashboard
 
   resources :clients
   resources :tasks

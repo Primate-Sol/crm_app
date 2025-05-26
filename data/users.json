@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": "19773dd1-6604-4476-a681-40aff4bc00ff",
+    "name": "Ruby",
+    "email": "ruby@example.com",
+    "password_digest": "$2a$12$oCTQw73mCZXiunPoyvqiaO4lXUwGpih3gQYhmMUZQZ8ZaPNJ0IsdS"
+  },
+  {
+    "id": "c069aa78-a771-4da5-8675-5ccc22a3b501",
+    "name": "Lotz",
+    "email": "lotzbattles@gmail.com",
+    "password_digest": "$2a$12$tcc5uLTLlbDPF7qfkiOCdewiwm8ASdEv3YHN8aEPIZQURivr44NaC"
+  }
+]
