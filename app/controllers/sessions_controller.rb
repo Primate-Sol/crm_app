@@ -15,8 +15,8 @@ class SessionsController < ApplicationController
       session[:user_id] = user.id
       Rails.logger.debug "Logged in: #{user.email}, session user_id: #{session[:user_id]}"
       respond_to do |format|
-        format.html { redirect_to clients_path, notice: "Logged in!" }
-        format.turbo_stream { redirect_to clients_path }
+        format.html { redirect_to dashboard_path, notice: "Logged in!" }
+        format.turbo_stream { redirect_to dashboard_path }
       end
     else
       flash[:alert] = "Invalid email or password"
