@@ -13,8 +13,9 @@
 
     if (calendarEl) {
       const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: "dayGridMonth"
-        // You can add options like `events: [...]` here
+        initialView: "dayGridMonth",
+        // Add more options below, e.g., events
+        // events: "/events.json"
       });
 
       calendar.render();
