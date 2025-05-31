@@ -2,8 +2,22 @@ class CalendarController < ApplicationController
   before_action :require_login
 
   def index
-    # This renders calendar/index.html.erb
-    # You can preload user-specific events here in the future, like:
-    # @events = JsonStorage.read("events.json").select { |e| e["user_id"] == current_user["id"] }
+    respond_to do |format|
+      format.html
+      format.json do
+        events = JsonStorage.read("events.json").select do |e|
+          e["user_id"] == current_user.id
+        end
+
+        render json: events.map { |event|
+          {
+            id: event["id"],
+            title: event["title"],
+            start: event["start"],
+            end: event["end"]
+          }
+        }
+      end
+    end
   end
 end
