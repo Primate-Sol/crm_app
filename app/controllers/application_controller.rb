@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
   def require_login
     unless session[:user_id] || allowed_paths?
-      redirect_to login_path
+      redirect_to login_path, alert: "Please log in to continue."
     end
   end
 
@@ -17,7 +17,11 @@ class ApplicationController < ActionController::Base
 
   def current_user
     return unless session[:user_id]
-    @current_user ||= User.find_by_id(session[:user_id])
+
+    @current_user ||= begin
+      users = JsonStorage.read("users.json")
+      users.find { |u| u["id"] == session[:user_id] }
+    end
   end
   helper_method :current_user
 end

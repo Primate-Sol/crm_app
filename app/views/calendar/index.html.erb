@@ -1,2 +1,31 @@
 <h1>Calendar</h1>
-<div id="calendar" style="max-width: 900px; margin: 40px auto;"></div>
+<div id="calendar"></div>
+
+<!-- FullCalendar CSS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+
+<script>
+  document.addEventListener("turbo:load", function () {
+    const calendarEl = document.getElementById("calendar");
+
+    if (calendarEl) {
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: "dayGridMonth",
+        // Add more options below, e.g., events
+        // events: "/events.json"
+      });
+
+      calendar.render();
+    }
+  });
+</script>
+
+<style>
+  #calendar {
+    max-width: 900px;
+    margin: 40px auto;
+  }
+</style>
