@@ -1,23 +1,23 @@
 <h1>Register</h1>
 
-<%= form_with url: register_path, method: :post do |f| %>
+<%= form_with url: register_path, method: :post, scope: :user, local: true do |f| %>
   <div>
-    <%= label_tag :name %><br>
-    <%= text_field_tag :name, params[:name], required: true %>
+    <%= f.label :name %><br>
+    <%= f.text_field :name, required: true %>
   </div>
 
   <div>
-    <%= label_tag :email %><br>
-    <%= email_field_tag :email, params[:email], required: true %>
+    <%= f.label :email %><br>
+    <%= f.email_field :email, required: true %>
   </div>
 
   <div>
-    <%= label_tag :password %><br>
-    <%= password_field_tag :password, nil, required: true %>
+    <%= f.label :password %><br>
+    <%= f.password_field :password, required: true %>
   </div>
 
   <div>
-    <%= submit_tag "Register" %>
+    <%= f.submit "Register" %>
   </div>
 <% end %>
 
