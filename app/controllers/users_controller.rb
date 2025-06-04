@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   skip_before_action :require_login, only: [:new, :create]
 
-  EMAIL_FORMAT = /\A[^@\s]+@[^@\s]+\z/ # Validates email contains exactly one @ symbol and no whitespace
+  EMAIL_FORMAT = /\A[^@\s]+@[^@\s]+\z/o # Validates email contains exactly one @ symbol and no whitespace. 'o' caches the compiled pattern.
 
   def new
     # Render registration form
