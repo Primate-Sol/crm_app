@@ -1,7 +1,8 @@
 class UsersController < ApplicationController
   skip_before_action :require_login, only: [:new, :create]
 
-  EMAIL_FORMAT = /\A[^@\s]+@[^@\s]+\z/ # Validates email contains exactly one @ and no whitespace
+  # Validates email contains exactly one "@" and no whitespace
+  EMAIL_FORMAT = /\A[^@\s]+@[^@\s]+\z/
 
   def new
     # Render registration form
@@ -11,13 +12,12 @@ class UsersController < ApplicationController
     file_path = Rails.root.join("data", "users.json")
     users = User.from_json(file_path)
 
-    user_params = registration_params
-    name = user_params[:name].strip
-    email = user_params[:email].strip.downcase
-    password = user_params[:password]
+    name = params[:name].to_s.strip
+    email = params[:email].to_s.strip.downcase
+    password = params[:password].to_s
     errors = []
 
-    Rails.logger.debug "Starting user registration for email: #{email}"
+    Rails.logger.debug "Creating new user: #{email}"
 
     # Basic input presence checks
     errors << "Name cannot be blank" if name.empty?
@@ -42,8 +42,8 @@ class UsersController < ApplicationController
     end
 
     if errors.any?
-      Rails.logger.warn "Registration failed for #{email}: #{errors.join(', ')}"
       flash[:alert] = errors.join(". ") + "."
+      Rails.logger.warn "User registration failed: #{errors.join(', ')}"
       redirect_to register_path
       return
     end
@@ -54,14 +54,7 @@ class UsersController < ApplicationController
 
     User.save_all(users, file_path)
     session[:user_id] = user.id
-
-    Rails.logger.info "User registered successfully: #{user.email}"
+    Rails.logger.info "User #{user.email} registered successfully"
     redirect_to clients_path, notice: "Registration successful!"
-  end
-
-  private
-
-  def registration_params
-    params.permit(:name, :email, :password)
   end
 end
