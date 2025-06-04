@@ -16,7 +16,7 @@ module JsonEncryption
   def self.decrypt(encrypted_data)
     JSON.parse(ENCRYPTOR.decrypt_and_verify(encrypted_data))
   rescue ActiveSupport::MessageEncryptor::InvalidMessage => e
-    Rails.logger.error("JSON decryption failed: #{e.message}")
+    Rails.logger.error("JSON decryption failed: #{e.message}. Data size: #{encrypted_data.bytesize} bytes")
     nil
   end
 end
