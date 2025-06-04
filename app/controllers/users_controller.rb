@@ -3,6 +3,14 @@ class UsersController < ApplicationController
 
   EMAIL_FORMAT = /\A[^@\s]+@[^@\s]+\z/o # Validates email contains exactly one @ symbol and no whitespace. 'o' caches the compiled pattern.
 
+  PASSWORD_RULES = [
+    { regex: /.{8,}/, message: "must be at least 8 characters" },
+    { regex: /[a-z]/, message: "must include at least one lowercase letter" },
+    { regex: /[A-Z]/, message: "must include at least one uppercase letter" },
+    { regex: /\d/, message: "must include at least one number" },
+    { regex: /[^A-Za-z0-9]/, message: "must include at least one special character" }
+  ]
+
   def new
     # Render registration form
   end
@@ -29,11 +37,9 @@ class UsersController < ApplicationController
     end
 
     # Password complexity validation
-    errors << "Password must be at least 8 characters" unless password.length >= 8
-    errors << "Password must include at least one lowercase letter" unless password.match(/[a-z]/)
-    errors << "Password must include at least one uppercase letter" unless password.match(/[A-Z]/)
-    errors << "Password must include at least one number" unless password.match(/\d/)
-    errors << "Password must include at least one special character" unless password.match(/[^A-Za-z0-9]/)
+    PASSWORD_RULES.each do |rule|
+      errors << "Password #{rule[:message]}" unless password.match?(rule[:regex])
+    end
 
     # Duplicate email check
     if users.any? { |u| u.email.downcase == email }
