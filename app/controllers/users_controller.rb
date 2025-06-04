@@ -1,62 +1,67 @@
-def create
-  file_path = Rails.root.join("data", "users.json")
-  users = User.from_json(file_path)
+class UsersController < ApplicationController
+  skip_before_action :require_login, only: [:new, :create]
 
-  name = user_params[:name].to_s.strip
-  email = user_params[:email].to_s.strip.downcase
-  password = user_params[:password].to_s
+  EMAIL_FORMAT = /\A[^@\s]+@[^@\s]+\z/ # Validates email contains exactly one @ and no whitespace
 
-  Rails.logger.info "Attempting registration for email: #{email}"
-
-  errors = validate_inputs(name, email, password, users)
-
-  if errors.any?
-    Rails.logger.warn "Registration failed for #{email}: #{errors.join(', ')}"
-    flash[:alert] = errors.join(". ") + "."
-    redirect_to register_path and return
+  def new
+    # Render registration form
   end
 
-  user = User.new(name: name, email: email)
-  user.password = password
-  users << user
+  def create
+    file_path = Rails.root.join("data", "users.json")
+    users = User.from_json(file_path)
 
-  User.save_all(users, file_path)
-  session[:user_id] = user.id
+    user_params = registration_params
+    name = user_params[:name].strip
+    email = user_params[:email].strip.downcase
+    password = user_params[:password]
+    errors = []
 
-  Rails.logger.info "Registration successful for user ID #{user.id}, email: #{user.email}"
-  redirect_to clients_path, notice: "Registration successful!"
-end
+    Rails.logger.debug "Starting user registration for email: #{email}"
 
-private
+    # Basic input presence checks
+    errors << "Name cannot be blank" if name.empty?
+    errors << "Email cannot be blank" if email.empty?
+    errors << "Password cannot be blank" if password.empty?
 
-# Whitelists and requires necessary parameters
-def user_params
-  params.require(:user).permit(:name, :email, :password)
-end
+    # Email format validation
+    unless email.match?(EMAIL_FORMAT)
+      errors << "Email format is invalid"
+    end
 
-# Validates presence, format, and uniqueness
-def validate_inputs(name, email, password, users)
-  errors = []
+    # Password complexity validation
+    errors << "Password must be at least 8 characters" unless password.length >= 8
+    errors << "Password must include at least one lowercase letter" unless password.match(/[a-z]/)
+    errors << "Password must include at least one uppercase letter" unless password.match(/[A-Z]/)
+    errors << "Password must include at least one number" unless password.match(/\d/)
+    errors << "Password must include at least one special character" unless password.match(/[^A-Za-z0-9]/)
 
-  errors << "Name cannot be blank" if name.empty?
-  errors << "Email cannot be blank" if email.empty?
-  errors << "Password cannot be blank" if password.empty?
+    # Duplicate email check
+    if users.any? { |u| u.email.downcase == email }
+      errors << "Email already registered"
+    end
 
-  unless email.match?(/\A[^@\s]+@[^@\s]+\z/)
-    errors << "Email format is invalid"
+    if errors.any?
+      Rails.logger.warn "Registration failed for #{email}: #{errors.join(', ')}"
+      flash[:alert] = errors.join(". ") + "."
+      redirect_to register_path
+      return
+    end
+
+    user = User.new(name: name, email: email)
+    user.password = password
+    users << user
+
+    User.save_all(users, file_path)
+    session[:user_id] = user.id
+
+    Rails.logger.info "User registered successfully: #{user.email}"
+    redirect_to clients_path, notice: "Registration successful!"
   end
 
-  if users.any? { |u| u.email.downcase.strip == email }
-    errors << "Email already registered"
-  end
+  private
 
-  if password.length < 8
-    errors << "Password must be at least 8 characters"
+  def registration_params
+    params.permit(:name, :email, :password)
   end
-  errors << "Password must include at least one lowercase letter" unless password.match(/[a-z]/)
-  errors << "Password must include at least one uppercase letter" unless password.match(/[A-Z]/)
-  errors << "Password must include at least one number" unless password.match(/\d/)
-  errors << "Password must include at least one special character" unless password.match(/[^A-Za-z0-9]/)
-
-  errors
 end
