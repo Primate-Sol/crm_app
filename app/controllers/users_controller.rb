@@ -12,24 +12,23 @@ class UsersController < ApplicationController
     file_path = Rails.root.join("data", "users.json")
     users = User.from_json(file_path)
 
-    name = params[:name].to_s.strip
-    email = params[:email].to_s.strip.downcase
-    password = params[:password].to_s
+    input = registration_params
+    name = input[:name].to_s.strip
+    email = input[:email].to_s.strip.downcase
+    password = input[:password].to_s
     errors = []
 
     Rails.logger.debug "Creating new user: #{email}"
 
-    # Basic input presence checks
+    # Presence checks
     errors << "Name cannot be blank" if name.empty?
     errors << "Email cannot be blank" if email.empty?
     errors << "Password cannot be blank" if password.empty?
 
-    # Email format validation
-    unless email.match?(EMAIL_FORMAT)
-      errors << "Email format is invalid"
-    end
+    # Email format
+    errors << "Email format is invalid" unless email.match?(EMAIL_FORMAT)
 
-    # Password complexity validation
+    # Password complexity
     errors << "Password must be at least 8 characters" unless password.length >= 8
     errors << "Password must include at least one lowercase letter" unless password.match(/[a-z]/)
     errors << "Password must include at least one uppercase letter" unless password.match(/[A-Z]/)
@@ -56,5 +55,11 @@ class UsersController < ApplicationController
     session[:user_id] = user.id
     Rails.logger.info "User #{user.email} registered successfully"
     redirect_to clients_path, notice: "Registration successful!"
+  end
+
+  private
+
+  def registration_params
+    params.require(:user).permit(:name, :email, :password)
   end
 end
