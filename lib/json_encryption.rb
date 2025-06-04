@@ -1,18 +1,22 @@
-require 'active_support'
-require 'active_support/core_ext'
 require 'active_support/message_encryptor'
+require 'active_support/key_generator'
 
 module JsonEncryption
-  KEY = Rails.application.credentials.secret_key_base.byteslice(0..31)
-  CIPHER = 'aes-256-gcm'
+  # Derive a secure 256-bit key using a dedicated encryption key base and a salt
+  key_base = Rails.application.credentials.encryption_key_base
+  raise "Missing encryption_key_base in credentials" unless key_base.present?
+
+  KEY = ActiveSupport::KeyGenerator.new(key_base).generate_key('json encryption salt', 32)
+  ENCRYPTOR = ActiveSupport::MessageEncryptor.new(KEY)
 
   def self.encrypt(data)
-    encryptor = ActiveSupport::MessageEncryptor.new(KEY, cipher: CIPHER)
-    encryptor.encrypt_and_sign(data)
+    ENCRYPTOR.encrypt_and_sign(data.to_json)
   end
 
   def self.decrypt(encrypted_data)
-    encryptor = ActiveSupport::MessageEncryptor.new(KEY, cipher: CIPHER)
-    encryptor.decrypt_and_verify(encrypted_data)
+    JSON.parse(ENCRYPTOR.decrypt_and_verify(encrypted_data))
+  rescue ActiveSupport::MessageEncryptor::InvalidMessage => e
+    Rails.logger.error("JSON decryption failed: #{e.message}")
+    nil
   end
 end
