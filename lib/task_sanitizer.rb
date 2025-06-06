@@ -1,25 +1,29 @@
-require_relative 'input_sanitizer'
-require 'date'
-
+# lib/task_sanitizer.rb
 class TaskSanitizer
-  def self.sanitize(attributes)
-    {
-      title: InputSanitizer.clean_string(attributes[:title]),
-      description: InputSanitizer.clean_string(attributes[:description]),
-      status: InputSanitizer.clean_string(attributes[:status]),
-      due_date: sanitize_due_date(attributes[:due_date])
-    }
+  def initialize(sanitizer_strategy = InputSanitizer)
+    @sanitizer = sanitizer_strategy
   end
 
-  def self.sanitize_due_date(raw_date)
+  def sanitize(attributes)
+    string_attrs = [:title, :description, :status]
+    sanitized_strings = batch_clean_strings(attributes.slice(*string_attrs))
+
+    sanitized_strings.merge(due_date: sanitize_due_date(attributes[:due_date]))
+  end
+
+  private
+
+  def batch_clean_strings(attrs)
+    attrs.transform_values { |v| @sanitizer.clean_string(v) }
+  end
+
+  def sanitize_due_date(raw_date)
     return nil unless raw_date
     return raw_date if raw_date.is_a?(Date)
 
-    clean = InputSanitizer.clean_string(raw_date)
-    begin
-      Date.parse(clean).to_s
-    rescue Date::Error
-      nil
-    end
+    clean = @sanitizer.clean_string(raw_date)
+    Date.parse(clean)
+  rescue Date::Error
+    nil
   end
 end
