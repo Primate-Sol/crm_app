@@ -1,17 +1,29 @@
+# app/services/client_sanitizer.rb
 require_relative '../lib/input_sanitizer'
 
 class ClientSanitizer
-  def self.sanitize(attributes)
-    sanitizer = InputSanitizer
-    {
-      name: sanitizer.clean_string(attributes[:name]),
-      email: sanitizer.normalize_email(attributes[:email]),
-      phone: sanitize_optional(attributes[:phone], sanitizer),
-      notes: sanitize_optional(attributes[:notes], sanitizer)
-    }
-  end
+  class << self
+    def sanitize(attributes)
+      {
+        name: clean(attributes[:name]),
+        email: normalize_email(attributes[:email]),
+        phone: clean_optional(attributes[:phone]),
+        notes: clean_optional(attributes[:notes])
+      }
+    end
 
-  def self.sanitize_optional(value, sanitizer)
-    value ? sanitizer.clean_string(value) : nil
+    private
+
+    def clean(value)
+      InputSanitizer.clean_string(value)
+    end
+
+    def normalize_email(value)
+      InputSanitizer.normalize_email(value)
+    end
+
+    def clean_optional(value)
+      value ? clean(value) : nil
+    end
   end
 end
