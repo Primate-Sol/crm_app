@@ -1,44 +1,83 @@
-class UsersController < ApplicationController
-  skip_before_action :require_login, only: [:new, :create]
+require 'bcrypt'
+require 'securerandom'
+require_relative '../../lib/json_encryption'
 
-  def new
-    # Render registration form
+class User
+  include ActiveModel::Model
+  attr_accessor :name, :email, :password
+  attr_reader :id
+
+  EMAIL_FORMAT = /\A[^@\s]+@[^@\s]+\z/o
+
+  PASSWORD_RULES = [
+    { regex: /.{8,}/, message: "must be at least 8 characters" },
+    { regex: /[a-z]/, message: "must include at least one lowercase letter" },
+    { regex: /[A-Z]/, message: "must include at least one uppercase letter" },
+    { regex: /\d/, message: "must include at least one number" },
+    { regex: /[^A-Za-z0-9]/, message: "must include at least one special character" }
+  ]
+
+  validates :name, presence: true
+  validates :email, presence: true, format: { with: EMAIL_FORMAT }
+  validate :validate_password
+
+  def initialize(attributes = {})
+    super
+    @id ||= SecureRandom.uuid
   end
 
-  def create
-    file_path = Rails.root.join("data", "users.json")
-    users = User.from_json(file_path)
+  def password=(plain_password)
+    @password = plain_password
+    @password_needs_hashing = true
+  end
 
-    if users.any? { |u| u.email == params[:email] }
-      flash[:alert] = "Email already registered"
-      redirect_to register_path
-      return
+  def ensure_password_hashed
+    if @password_needs_hashing && @password.present?
+      @password_digest = BCrypt::Password.create(@password)
+      @password_needs_hashing = false
     end
+  end
 
-    password = params[:password]
+  def as_json(*)
+    ensure_password_hashed
+    {
+      id: id,
+      name: name,
+      email: email,
+      password_digest: JsonEncryption.encrypt(@password_digest.to_s)
+    }
+  end
 
-    unless valid_password?(password)
-      flash[:alert] = "Password must be at least 8 characters and include an uppercase letter, a lowercase letter, a number, and a special character."
-      redirect_to register_path
-      return
+  def self.from_json(file_path)
+    data = JsonFileStore.read(file_path)
+    data.map do |user_data|
+      decrypted_password = JsonEncryption.decrypt(user_data["password_digest"])
+      user = new(
+        name: user_data["name"],
+        email: user_data["email"],
+        password: decrypted_password
+      )
+      user.instance_variable_set(:@id, user_data["id"])
+      user.ensure_password_hashed
+      user
     end
+  end
 
-    user = User.new(name: params[:name], email: params[:email])
-    user.password = password
-    users << user
-
-    User.save_all(users, file_path)
-    session[:user_id] = user.id
-    redirect_to clients_path, notice: "Registration successful!"
+  def self.save_all(users, file_path)
+    users.each(&:ensure_password_hashed)
+    data = users.map(&:as_json)
+    JsonFileStore.write(file_path, data)
   end
 
   private
 
-  def valid_password?(password)
-    password.length >= 8 &&
-      password.match(/[A-Z]/) &&
-      password.match(/[a-z]/) &&
-      password.match(/[0-9]/) &&
-      password.match(/[^A-Za-z0-9]/)
+  def validate_password
+    if password.blank?
+      errors.add(:password, "can't be blank")
+    else
+      PASSWORD_RULES.each do |rule|
+        errors.add(:password, rule[:message]) unless password.match?(rule[:regex])
+      end
+    end
   end
 end

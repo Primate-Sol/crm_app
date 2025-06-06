@@ -1,45 +1,32 @@
-def create
-  file_path = Rails.root.join("data", "users.json")
-  users = User.from_json(file_path)
+class UsersController < ApplicationController
+  skip_before_action :require_login, only: [:new, :create]
 
-  name = params[:name].to_s.strip
-  email = params[:email].to_s.strip.downcase
-  password = params[:password].to_s
-  errors = []
-
-  # Basic input presence checks
-  errors << "Name cannot be blank" if name.empty?
-  errors << "Email cannot be blank" if email.empty?
-  errors << "Password cannot be blank" if password.empty?
-
-  # Email format validation
-  unless email.match?(/\A[^@\s]+@[^@\s]+\z/)
-    errors << "Email format is invalid"
+  def new
+    # Renders the user registration form
   end
 
-  # Password complexity validation
-  errors << "Password must be at least 8 characters" unless password.length >= 8
-  errors << "Password must include at least one lowercase letter" unless password.match(/[a-z]/)
-  errors << "Password must include at least one uppercase letter" unless password.match(/[A-Z]/)
-  errors << "Password must include at least one number" unless password.match(/\d/)
-  errors << "Password must include at least one special character" unless password.match(/[^A-Za-z0-9]/)
+  def create
+    Rails.logger.info "User registration attempt for email: #{registration_params[:email]}"
 
-  # Duplicate email check
-  if users.any? { |u| u.email.downcase == email }
-    errors << "Email already registered"
+    result = UserRegistrationService.register(registration_params)
+
+    if result.success?
+      Rails.logger.info "User registration successful for email: #{registration_params[:email]}"
+      session[:user_id] = result.user.id
+      redirect_to clients_path, notice: "Registration successful!"
+    else
+      errors_message = result.errors.join('. ')
+      Rails.logger.warn "User registration failed for email: #{registration_params[:email]}. Errors: #{errors_message}"
+      flash[:alert] = errors_message + '.'
+      redirect_to register_path
+    end
   end
 
-  if errors.any?
-    flash[:alert] = errors.join(". ") + "."
-    redirect_to register_path
-    return
+  private
+
+  # Protects against mass assignment vulnerabilities by explicitly
+  # defining which parameters are allowed for user creation
+  def registration_params
+    params.require(:user).permit(:name, :email, :password)
   end
-
-  user = User.new(name: name, email: email)
-  user.password = password
-  users << user
-
-  User.save_all(users, file_path)
-  session[:user_id] = user.id
-  redirect_to clients_path, notice: "Registration successful!"
 end
