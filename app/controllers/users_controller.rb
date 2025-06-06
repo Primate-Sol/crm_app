@@ -2,10 +2,12 @@ class UsersController < ApplicationController
   skip_before_action :require_login, only: [:new, :create]
 
   def new
-    # render registration form
+    # Renders the user registration form
   end
 
   def create
+    Rails.logger.debug "Processing user registration attempt for: #{registration_params[:email]}"
+
     result = UserRegistrationService.register(registration_params)
 
     if result.success?
@@ -19,6 +21,8 @@ class UsersController < ApplicationController
 
   private
 
+  # Protects against mass assignment vulnerabilities by explicitly
+  # defining which parameters are allowed for user creation
   def registration_params
     params.require(:user).permit(:name, :email, :password)
   end
