@@ -1,12 +1,15 @@
-require_relative '../lib/input_sanitizer'
-
 class ClientSanitizer
   def self.sanitize(attributes)
+    @sanitizer = InputSanitizer
     {
-      name: InputSanitizer.clean_string(attributes[:name]),
-      email: InputSanitizer.normalize_email(attributes[:email]),
-      phone: attributes[:phone] ? InputSanitizer.clean_string(attributes[:phone]) : nil,
-      notes: attributes[:notes] ? InputSanitizer.clean_string(attributes[:notes]) : nil
+      name: @sanitizer.clean_string(attributes[:name]),
+      email: @sanitizer.normalize_email(attributes[:email]),
+      phone: sanitize_optional(attributes[:phone]),
+      notes: sanitize_optional(attributes[:notes])
     }
+  end
+
+  def self.sanitize_optional(value)
+    value ? @sanitizer.clean_string(value) : nil
   end
 end
