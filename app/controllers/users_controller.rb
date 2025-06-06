@@ -15,8 +15,9 @@ class UsersController < ApplicationController
       session[:user_id] = result.user.id
       redirect_to clients_path, notice: "Registration successful!"
     else
-      Rails.logger.warn "User registration failed for email: #{registration_params[:email]}. Errors: #{result.errors.join(', ')}"
-      flash[:alert] = result.errors.join(". ") + "."
+      errors_message = result.errors.join('. ')
+      Rails.logger.warn "User registration failed for email: #{registration_params[:email]}. Errors: #{errors_message}"
+      flash[:alert] = errors_message + '.'
       redirect_to register_path
     end
   end
