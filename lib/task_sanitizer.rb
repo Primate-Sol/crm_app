@@ -1,5 +1,8 @@
-require_relative 'input_sanitizer'
-require_relative 'sanitizer_strategy'
+# lib/task_sanitizer.rb
+# frozen_string_literal: true
+
+require_relative './input_sanitizer'
+require_relative './sanitizer_strategy'
 
 class TaskSanitizer
   include SanitizerStrategy
@@ -19,10 +22,8 @@ class TaskSanitizer
     sanitized_strings.merge(due_date: sanitize_due_date(attributes[:due_date]))
   end
 
-  private
-
-  def batch_clean_strings(string_hash)
-    string_hash.transform_values { |v| @sanitizer.clean_string(v) }
+  def batch_clean_strings(task_attributes)
+    task_attributes.transform_values { |v| @sanitizer.clean_string(v) }
   end
 
   def sanitize_due_date(raw_date)
