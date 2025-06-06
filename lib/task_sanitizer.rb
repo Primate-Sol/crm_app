@@ -1,17 +1,9 @@
-require_relative './input_sanitizer'
-
-# Interface for sanitizer implementations
-# @abstract Implement this interface to provide string sanitization
-module SanitizerStrategy
-  # Clean and sanitize the input string
-  # @param input [String] The string to be sanitized
-  # @return [String] The sanitized string
-  def clean_string(input)
-    raise NotImplementedError
-  end
-end
+require_relative 'input_sanitizer'
+require_relative 'sanitizer_strategy'
 
 class TaskSanitizer
+  include SanitizerStrategy
+
   STRING_ATTRS = [:title, :description, :status].freeze
 
   def initialize(sanitizer_strategy = InputSanitizer)
@@ -29,8 +21,8 @@ class TaskSanitizer
 
   private
 
-  def batch_clean_strings(attr_hash)
-    attr_hash.transform_values { |v| @sanitizer.clean_string(v) }
+  def batch_clean_strings(string_hash)
+    string_hash.transform_values { |v| @sanitizer.clean_string(v) }
   end
 
   def sanitize_due_date(raw_date)
