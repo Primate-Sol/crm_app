@@ -1,12 +1,12 @@
 require_relative './input_sanitizer'
 
-# Optional: Define an interface module for clarity and safety
+# Interface for sanitizer implementations
+# @abstract Implement this interface to provide string sanitization
 module SanitizerStrategy
+  # Clean and sanitize the input string
+  # @param input [String] The string to be sanitized
+  # @return [String] The sanitized string
   def clean_string(input)
-    raise NotImplementedError
-  end
-
-  def normalize_email(input)
     raise NotImplementedError
   end
 end
@@ -15,8 +15,8 @@ class TaskSanitizer
   STRING_ATTRS = [:title, :description, :status].freeze
 
   def initialize(sanitizer_strategy = InputSanitizer)
-    unless sanitizer_strategy.respond_to?(:clean_string)
-      raise ArgumentError, "Sanitizer must implement :clean_string"
+    unless sanitizer_strategy.singleton_class.included_modules.include?(SanitizerStrategy)
+      raise ArgumentError, 'Sanitizer must implement SanitizerStrategy interface'
     end
 
     @sanitizer = sanitizer_strategy
