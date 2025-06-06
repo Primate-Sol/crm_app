@@ -1,17 +1,15 @@
 require 'securerandom'
+require_relative '../../lib/client_sanitizer'
 require_relative '../../lib/json_encryption'
-require_relative '../../lib/input_sanitizer'
-require_relative '../../services/client_sanitizer'
+require_relative '../../lib/validators/email_validator'
 
 class Client
   include ActiveModel::Model
   attr_accessor :name, :email, :phone, :notes
   attr_reader :id
 
-  EMAIL_FORMAT = /\A[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\z/o
-
   validates :name, presence: true
-  validates :email, presence: true, format: { with: EMAIL_FORMAT }
+  validates :email, presence: true, email: true
 
   def initialize(attributes = {})
     sanitized = ClientSanitizer.sanitize(attributes)
@@ -35,8 +33,8 @@ class Client
       client = new(
         name: client_data["name"],
         email: client_data["email"],
-        phone: JsonEncryption.decrypt(client_data["phone"]),
-        notes: JsonEncryption.decrypt(client_data["notes"])
+        phone: client_data["phone"] ? JsonEncryption.decrypt(client_data["phone"]) : nil,
+        notes: client_data["notes"] ? JsonEncryption.decrypt(client_data["notes"]) : nil
       )
       client.instance_variable_set(:@id, client_data["id"])
       client
