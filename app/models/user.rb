@@ -1,9 +1,13 @@
 require 'bcrypt'
 require 'securerandom'
 require_relative '../../lib/json_encryption'
+require 'active_support/core_ext/string/strip'
+require 'action_view/helpers/sanitize_helper'
 
 class User
   include ActiveModel::Model
+  include ActionView::Helpers::SanitizeHelper
+
   attr_accessor :name, :email, :password
   attr_reader :id
 
@@ -24,6 +28,7 @@ class User
   def initialize(attributes = {})
     super
     @id ||= SecureRandom.uuid
+    sanitize_fields
   end
 
   def password=(plain_password)
@@ -79,5 +84,10 @@ class User
         errors.add(:password, rule[:message]) unless password.match?(rule[:regex])
       end
     end
+  end
+
+  def sanitize_fields
+    self.name = strip_tags(name.to_s).strip
+    self.email = strip_tags(email.to_s).downcase.strip
   end
 end
