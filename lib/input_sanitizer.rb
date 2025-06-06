@@ -1,4 +1,9 @@
+require 'action_view'
+require_relative './sanitizer_strategy'
+
 module InputSanitizer
+  extend self
+  include SanitizerStrategy
   include ActionView::Helpers::SanitizeHelper
 
   # Removes HTML tags and trims whitespace
