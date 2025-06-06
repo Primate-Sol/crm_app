@@ -6,7 +6,7 @@ class UsersController < ApplicationController
   end
 
   def create
-    Rails.logger.debug "Processing user registration attempt for: #{registration_params[:email]}"
+    Rails.logger.info "User registration attempt for email: #{registration_params[:email]}"
 
     result = UserRegistrationService.register(registration_params)
 
