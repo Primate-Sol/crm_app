@@ -1,9 +1,12 @@
 require 'bcrypt'
 require 'securerandom'
 require_relative '../../lib/json_encryption'
+require_relative '../../lib/input_sanitizer'
 
 class User
   include ActiveModel::Model
+  include InputSanitizer
+
   attr_accessor :name, :email, :password
   attr_reader :id
 
@@ -24,6 +27,7 @@ class User
   def initialize(attributes = {})
     super
     @id ||= SecureRandom.uuid
+    sanitize_inputs
   end
 
   def password=(plain_password)
@@ -70,6 +74,11 @@ class User
   end
 
   private
+
+  def sanitize_inputs
+    self.name = clean_string(name)
+    self.email = normalize_email(email)
+  end
 
   def validate_password
     if password.blank?
