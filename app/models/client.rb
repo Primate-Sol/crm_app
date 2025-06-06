@@ -1,21 +1,22 @@
 require 'securerandom'
 require_relative '../../lib/json_encryption'
 require_relative '../../lib/input_sanitizer'
+require_relative '../../services/client_sanitizer'
 
 class Client
   include ActiveModel::Model
   attr_accessor :name, :email, :phone, :notes
   attr_reader :id
 
-  EMAIL_FORMAT = /\A[^@\s]+@[^@\s]+\z/o
+  EMAIL_FORMAT = /\A[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\z/o
 
   validates :name, presence: true
   validates :email, presence: true, format: { with: EMAIL_FORMAT }
 
   def initialize(attributes = {})
-    super
+    sanitized = ClientSanitizer.sanitize(attributes)
+    super(sanitized)
     @id ||= SecureRandom.uuid
-    sanitize_inputs
   end
 
   def as_json(*)
@@ -23,8 +24,8 @@ class Client
       id: id,
       name: name,
       email: email,
-      phone: phone,
-      notes: notes
+      phone: JsonEncryption.encrypt(phone),
+      notes: JsonEncryption.encrypt(notes)
     }
   end
 
@@ -34,8 +35,8 @@ class Client
       client = new(
         name: client_data["name"],
         email: client_data["email"],
-        phone: client_data["phone"],
-        notes: client_data["notes"]
+        phone: JsonEncryption.decrypt(client_data["phone"]),
+        notes: JsonEncryption.decrypt(client_data["notes"])
       )
       client.instance_variable_set(:@id, client_data["id"])
       client
@@ -45,14 +46,5 @@ class Client
   def self.save_all(clients, file_path)
     data = clients.map(&:as_json)
     JsonFileStore.write(file_path, data)
-  end
-
-  private
-
-  def sanitize_inputs
-    self.name = InputSanitizer.clean_string(name)
-    self.email = InputSanitizer.normalize_email(email)
-    self.phone = InputSanitizer.clean_string(phone) if phone
-    self.notes = InputSanitizer.clean_string(notes) if notes
   end
 end
