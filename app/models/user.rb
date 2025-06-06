@@ -28,10 +28,18 @@ class User
 
   def password=(plain_password)
     @password = plain_password
-    @password_digest = BCrypt::Password.create(plain_password)
+    @password_needs_hashing = true
+  end
+
+  def ensure_password_hashed
+    if @password_needs_hashing && @password.present?
+      @password_digest = BCrypt::Password.create(@password)
+      @password_needs_hashing = false
+    end
   end
 
   def as_json(*)
+    ensure_password_hashed
     {
       id: id,
       name: name,
@@ -41,7 +49,6 @@ class User
   end
 
   def self.from_json(file_path)
-    # Example: Load users from JSON file using JsonFileStore or similar
     data = JsonFileStore.read(file_path)
     data.map do |user_data|
       decrypted_password = JsonEncryption.decrypt(user_data["password_digest"])
@@ -51,11 +58,13 @@ class User
         password: decrypted_password
       )
       user.instance_variable_set(:@id, user_data["id"])
+      user.ensure_password_hashed
       user
     end
   end
 
   def self.save_all(users, file_path)
+    users.each(&:ensure_password_hashed)
     data = users.map(&:as_json)
     JsonFileStore.write(file_path, data)
   end
