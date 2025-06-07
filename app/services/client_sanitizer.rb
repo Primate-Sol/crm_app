@@ -1,30 +1,30 @@
 # app/services/client_sanitizer.rb
-require_relative '../../lib/input_sanitizer'
+require_relative '../lib/input_sanitizer'
 
 class ClientSanitizer
   def self.sanitize(attributes)
-    sanitizer = new
+    sanitizer = InputSanitizer
     {
-      name: sanitizer.clean(attributes[:name]),
-      email: sanitizer.clean_email(attributes[:email]),
-      phone: sanitizer.clean_optional(attributes[:phone]),
-      notes: sanitizer.clean_optional(attributes[:notes])
+      name: clean(attributes[:name]),
+      email: normalize_email(attributes[:email]),
+      phone: sanitize_optional(attributes[:phone]),
+      notes: sanitize_optional(attributes[:notes])
     }
   end
 
-  def clean(value)
+  def self.clean(value)
     InputSanitizer.clean_string(value)
   rescue StandardError => e
-    raise StandardError, "Failed to sanitize value #{value.inspect}: #{e.message}"
+    raise StandardError, "Failed to sanitize input: #{e.message}"
   end
 
-  def clean_email(email)
+  def self.normalize_email(email)
     InputSanitizer.normalize_email(email)
   rescue StandardError => e
-    raise StandardError, "Failed to sanitize email #{email.inspect}: #{e.message}"
+    raise StandardError, "Failed to normalize email: #{e.message}"
   end
 
-  def clean_optional(value)
+  def self.sanitize_optional(value)
     value ? clean(value) : nil
   end
 end
