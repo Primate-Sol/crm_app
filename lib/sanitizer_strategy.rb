@@ -14,6 +14,7 @@ module SanitizerStrategy
   # @param input [String] The input to validate
   # @return [Boolean]
   def valid_input?(input)
-    raise NotImplementedError, 'Implement valid_input? in your strategy'
+    raise ArgumentError, "Input must be a String, got #{input.class}" unless input.is_a?(String)
+    true
   end
 end
