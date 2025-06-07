@@ -1,4 +1,3 @@
-# lib/sanitizer_strategy.rb
 # frozen_string_literal: true
 
 module SanitizerStrategy
@@ -10,11 +9,11 @@ module SanitizerStrategy
     raise NotImplementedError, 'Implement clean_string in your strategy'
   end
 
-  # Optional: Validate if the input meets specific criteria
+  # Validate if the input meets specific criteria
   # @param input [String] The input to validate
   # @return [Boolean]
   def valid_input?(input)
     raise ArgumentError, "Input must be a String, got #{input.class}" unless input.is_a?(String)
-    true
+    raise NotImplementedError, 'Implement valid_input? in your strategy'
   end
 end
