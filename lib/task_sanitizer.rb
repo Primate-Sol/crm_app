@@ -22,6 +22,8 @@ class TaskSanitizer
     sanitized_strings.merge(due_date: sanitize_due_date(attributes[:due_date]))
   end
 
+  private
+
   def batch_clean_strings(task_attributes)
     task_attributes.transform_values { |v| @sanitizer.clean_string(v) }
   end
