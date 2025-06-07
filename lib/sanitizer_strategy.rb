@@ -6,7 +6,7 @@ module SanitizerStrategy
   # @param input [String] The string to be sanitized
   # @return [String] The sanitized string
   def clean_string(input)
-    raise ArgumentError, 'Input must be a String' unless input.is_a?(String)
+    raise ArgumentError, "Input must be a String, got #{input.class}" unless input.is_a?(String)
     raise NotImplementedError, 'Implement clean_string in your strategy'
   end
 
